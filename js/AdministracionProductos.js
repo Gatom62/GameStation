@@ -21,7 +21,7 @@ function MostrarDatos(datos) {
                 <td>${producto.stock}</td>
                 <td>${producto.precio}</td>
                 <td>
-                    <button class="btn btn-outline-primary" onclick="AbrirModalEditar('${producto.id}', '${producto.nombre}', '${producto.descuento}', '${producto.stock}', '${producto.precio}')">Editar</button>
+                    <button class="btn btn-outline-primary" onclick="AbrirModalEditar('${producto.id}', '${producto.nombre}', '${producto.descuento}', '${producto.stock}', '${producto.precio}')" data-bs-target="#mdEditar">Editar</button>
                     <button class="btn btn-outline-danger" onclick="EliminarProducto(${producto.id})">Eliminar</button>
                 </td>
             </tr>
@@ -31,8 +31,6 @@ function MostrarDatos(datos) {
 // Ejecuta el método al cargar el script.
 // Asegúrate de que 'ObtenerProductos' esté definido en algún lugar de tu código.
 ObtenerProductos();
-
-// Proceso para agregar un nuevo producto
 
 // Obtiene referencias a los elementos del DOM.
 const modalAgregar = document.getElementById("mdAgregar");
@@ -56,53 +54,116 @@ modalAgregar.addEventListener('click', (e) => {
     }
 });
 
-//Agregar nuevo integrante desde el formulario        //Para que este metodo se ejecute cuando el formulario tenga un submit
-document.getElementById("fmAgregar").addEventListener("submit", async e => {
-    e.preventDefault(); //Esto representa a "submit" y evita que el formulario se envie de un solo.
+//El volado para actulazar
+// Función para abrir el modal de edición con los datos del producto
+function AbrirModalEditar(id, nombre, descuento, stock, precio) {
+    // Asignar valores a los campos del formulario
+    document.getElementById("txtIdEditar").value = id;
+    document.getElementById("txtNombreEditar").value = nombre;
+    document.getElementById("txtDescuentoEditar").value = descuento;
+    document.getElementById("txtStockEditar").value = stock;
+    document.getElementById("txtPrecioEditar").value = precio;
+    
+    // Mostrar el modal
+    const modalEditar = new bootstrap.Modal(document.getElementById('mdEditar'));
+    modalEditar.show();
+}
 
-    //Capturar los valores del formulario
-    const Producto = document.getElementById("txtProducto").value.trim();
-    const Stock = document.getElementById("txtStock").value.trim();
-    const Precio = document.getElementById("txtPrecio").value.trim();
-    const Descuento = document.getElementById("txtDescuento").value.trim();
-
-    //Validación basica
-    if (!Producto || !Descuento || !Stock || !Precio) {
-        alert("Ingrese los valores necesarios");
-    }
-
-    //Llamar a la API para enviar el registro
-    const respuesta = await fetch(API_URL, {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ Producto, Descuento, Stock, Precio })
-    }); //fetch: Es para llamar a la api || await por si se tarda
-
-    //Verificar si la API responde que los datos fueron enviados correctamente
-    if (respuesta.ok) {
-        //Limpiar el formulario
-        document.getElementById("fmAgregar").reset();
-
-        //Cerrar el modal (dialog)
-        modalAgregar.close();
-
+// Función para manejar el envío del formulario de edición
+document.getElementById("fmEditar").addEventListener("submit", async e => {
+    e.preventDefault();
+    
+    // Capturar los valores del formulario
+    const id = document.getElementById("txtIdEditar").value;
+    const nombre = document.getElementById("txtNombreEditar").value.trim();
+    const stock = document.getElementById("txtStockEditar").value.trim();
+    const precio = document.getElementById("txtPrecioEditar").value.trim();
+    const descuento = document.getElementById("txtDescuentoEditar").value.trim();
+    
+    // Validación básica
+    if (!nombre || !stock || !precio) {
         Swal.fire({
-            title: "El registro fue agregado",
-            icon: "success",
-            draggable: true
+            title: "Error",
+            text: "Por favor complete todos los campos requeridos",
+            icon: "error"
         });
-
-        //Recargar la tabla
-        ObtenerIntegrantes();
-    } else {
+        return;
+    }
+    
+    try {
+        // Llamar a la API para actualizar el registro
+        const respuesta = await fetch(`${API_URL}/${id}`, {
+            method: "PUT",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombre, stock, precio, descuento })
+        });
+        
+        if (respuesta.ok) {
+            // Cerrar el modal
+            const modalEditar = bootstrap.Modal.getInstance(document.getElementById('mdEditar'));
+            modalEditar.hide();
+            
+            Swal.fire({
+                title: "¡Éxito!",
+                text: "El producto fue actualizado correctamente",
+                icon: "success"
+            });
+            
+            // Recargar la tabla
+            ObtenerProductos();
+        } else {
+            throw new Error("Error al actualizar el producto");
+        }
+    } catch (error) {
         Swal.fire({
-            title: "El registro no fue agregado",
-            icon: "error",
-            draggable: true
+            title: "Error",
+            text: error.message,
+            icon: "error"
         });
     }
 });
 
+//Eliminar un registro
+async function EliminarProducto(id) {
+    const result = await Swal.fire({
+        title: "¿Quieres eliminar el registro?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Eliminar",
+        cancelButtonText: "Cancelar"
+    });
+
+    if (result.isConfirmed) {
+        try {
+            const respuesta = await fetch(`${API_URL}/${id}`, {
+                method: "DELETE"
+            });
+
+            if (respuesta.ok) {
+                Swal.fire({
+                    title: "Registro eliminado",
+                    icon: "success"
+                });
+
+                // Recargar la tabla después de eliminar
+                ObtenerProductos();
+            } else {
+                Swal.fire({
+                    title: "El registro no fue eliminado",
+                    icon: "error"
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                title: "Error al eliminar",
+                text: error.message,
+                icon: "error"
+            });
+        }
+    }
+}
 
 //Para que sevea la imagen que el usuario aya subido
 document.addEventListener("DOMContentLoaded", function () {
