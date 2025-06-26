@@ -47,94 +47,92 @@
     </main>
 
     <!-- Modal -->
-    <div id="mdAgregar" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
+<div id="mdAgregar" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
 
-                <!-- Header del modal -->
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="staticBackdropLabel">Agregar producto</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Cerrar"></button>
+                    <!-- Header del modal -->
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="staticBackdropLabel">
+                            <i class="bi bi-bag-plus"></i> Agregar Producto
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Cerrar"></button>
+                    </div>
+
+                    <!-- Cuerpo del modal -->
+                    <div class="modal-body">
+                        <form id="fmAgregar">
+                            <div class="row g-3">
+                                <!-- Sección de imagen -->
+                                <div class="col-12">
+                                    <div class="image-upload-container">
+                                        <!-- Imagen del producto (vista previa) -->
+                                        <img id="productImage" src="https://via.placeholder.com/300x200?text=Imagen+del+producto"
+                                            alt="Imagen del producto" class="img-thumbnail mb-3"
+                                            style="max-width: 100%; height: 200px; object-fit: cover; display: block;">
+
+                                        <!-- Input para cargar la imagen -->
+                                        <div class="input-group">
+                                            <input type="file" class="form-control" id="productImageUpload" accept="image/*"
+                                                aria-label="Subir imagen del producto">
+                                            <button class="btn btn-outline-secondary" type="button" id="clearImageBtn">
+                                                <i class="bi bi-x-circle"></i> Limpiar
+                                            </button>
+                                        </div>
+
+                                        <!-- Mensajes de validación -->
+                                        <div class="mt-2">
+                                            <small id="imageHelp" class="form-text text-muted">
+                                                Formatos: JPG, PNG, GIF. Tamaño máximo: 2MB.
+                                            </small>
+                                            <div id="imageError" class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Campos del formulario -->
+                                <div class="col-md-6">
+                                    <label for="txtProducto" class="form-label">Nombre del Producto</label>
+                                    <input type="text" id="txtProducto" class="form-control form-control-lg"
+                                        placeholder="Ingrese el nombre del producto" required>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="txtPrecio" class="form-label">Precio ($)</label>
+                                    <input type="number" id="txtPrecio" class="form-control form-control-lg" 
+                                        placeholder="0.00" step="0.01" min="0" required>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="txtStock" class="form-label">Cantidad en Stock</label>
+                                    <input type="number" id="txtStock" class="form-control form-control-lg" 
+                                        placeholder="0" min="0" required>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label for="txtDescuento" class="form-label">Descuento (%)</label>
+                                    <input type="number" id="txtDescuento" class="form-control form-control-lg"
+                                        placeholder="0" min="0" max="100" step="1">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Footer del modal -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </button>
+                        <button type="submit" form="fmAgregar" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Agregar Producto
+                        </button>
+                    </div>
                 </div>
-
-                <!-- Cuerpo del formulario -->
-                <form id="fmAgregar" class="p-4">
-
-                    <!--Para agregar una imagen-->
-                    <div class="container">
-                        <div class="header">
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                <g id="SVGRepo_iconCarrier">
-                                    <path
-                                        d="M7 10V9C7 6.23858 9.23858 4 12 4C14.7614 4 17 6.23858 17 9V10C19.2091 10 21 11.7909 21 14C21 15.4806 20.1956 16.8084 19 17.5M7 10C4.79086 10 3 11.7909 3 14C3 15.4806 3.8044 16.8084 5 17.5M7 10C7.43285 10 7.84965 10.0688 8.24006 10.1959M12 12V21M12 12L15 15M12 12L9 15"
-                                        stroke="#000000" stroke-width="1.5" stroke-linecap="round"
-                                        stroke-linejoin="round"></path>
-                                </g>
-                            </svg>
-                            <p>Agregar imagen</p>
-                        </div>
-                        <br>
-                        <label for="file" class="footer">
-                            <svg fill="#000000" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                <g id="SVGRepo_iconCarrier">
-                                    <path d="M15.331 6H8.5v20h15V14.154h-8.169z"></path>
-                                    <path d="M18.153 6h-.009v5.342H23.5v-.002z"></path>
-                                </g>
-                            </svg>
-                            <p>No a seleccionado</p>
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                                <g id="SVGRepo_iconCarrier">
-                                    <path
-                                        d="M5.16565 10.1534C5.07629 8.99181 5.99473 8 7.15975 8H16.8402C18.0053 8 18.9237 8.9918 18.8344 10.1534L18.142 19.1534C18.0619 20.1954 17.193 21 16.1479 21H7.85206C6.80699 21 5.93811 20.1954 5.85795 19.1534L5.16565 10.1534Z"
-                                        stroke="#000000" stroke-width="2"></path>
-                                    <path d="M19.5 5H4.5" stroke="#000000" stroke-width="2" stroke-linecap="round">
-                                    </path>
-                                    <path d="M10 3C10 2.44772 10.4477 2 11 2H13C13.5523 2 14 2.44772 14 3V5H10V3Z"
-                                        stroke="#000000" stroke-width="2"></path>
-                                </g>
-                            </svg>
-                        </label>
-                        <input id="file" type="file">
-                    </div>
-
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <input type="text" id="txtProducto" class="form-control form-control-lg"
-                                placeholder="Nombre producto" required>
-                        </div>
-                        <div class="col-md-6">
-                            <input type="number" id="txtPrecio" class="form-control form-control-lg"
-                                placeholder="Precio" required>
-                        </div>
-                        <div class="col-md-6">
-                            <input type="number" id="txtStock" class="form-control form-control-lg"
-                                placeholder="Cantidad" required>
-                        </div>
-                        <div class="col-md-6">
-                            <input type="number" id="txtDescuento" class="form-control form-control-lg"
-                                placeholder="Descuento" required>
-                        </div>
-                    </div>
-
-                    <!-- Botones -->
-                    <div class="d-flex justify-content-end gap-2 mt-4">
-                        <button type="reset" class="btn btn-outline-secondary">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Agregar</button>
-                    </div>
-                </form>
-
             </div>
         </div>
     </div>
-
 
     <!--Cuadro de dialogo para editar-->
     <dialog id="mdEditar" class="modal"> <!--open="" para abrirlo-->
@@ -175,6 +173,73 @@
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/AdministracionProductos.js"></script>
+
+    <!--Para el volado que carga imagenes-->
+    <script>
+        // Para que se vea la imagen que el usuario haya subido
+        document.addEventListener("DOMContentLoaded", function () {
+            const uploadInput = document.getElementById("productImageUpload");
+            const productImage = document.getElementById("productImage");
+            const clearBtn = document.getElementById("clearImageBtn");
+            const errorElement = document.getElementById("imageError");
+
+            // Evento al seleccionar una imagen
+            uploadInput.addEventListener("change", function () {
+                const file = this.files[0];
+                errorElement.textContent = "";
+                uploadInput.classList.remove("is-invalid");
+
+                // Validaciones
+                if (!file) return;
+
+                if (!file.type.match('image.*')) {
+                    showError("¡Solo se permiten imágenes!");
+                    return;
+                }
+
+                if (file.size > 2 * 1024 * 1024) {
+                    showError("La imagen debe pesar menos de 2MB");
+                    return;
+                }
+
+                // Mostrar vista previa
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    productImage.src = e.target.result;
+                    productImage.style.display = "block";
+                    
+                    // Agregar una pequeña animación de éxito
+                    productImage.style.opacity = '0';
+                    setTimeout(() => {
+                        productImage.style.transition = 'opacity 0.3s ease';
+                        productImage.style.opacity = '1';
+                    }, 100);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Botón para limpiar la imagen
+            clearBtn.addEventListener("click", function () {
+                uploadInput.value = "";
+                productImage.src = "https://via.placeholder.com/300x200?text=Imagen+del+producto";
+                errorElement.textContent = "";
+                uploadInput.classList.remove("is-invalid");
+                
+                // Pequeña animación al limpiar
+                productImage.style.transition = 'opacity 0.2s ease';
+                productImage.style.opacity = '0.7';
+                setTimeout(() => {
+                    productImage.style.opacity = '1';
+                }, 200);
+            });
+
+            function showError(message) {
+                errorElement.textContent = message;
+                uploadInput.classList.add("is-invalid");
+                setTimeout(() => uploadInput.classList.remove("is-invalid"), 3000);
+            }
+        });
+    </script>
 </body>
 
 </html>

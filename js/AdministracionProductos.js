@@ -75,7 +75,7 @@ document.getElementById("fmAgregar").addEventListener("submit", async e => {
     const respuesta = await fetch(API_URL, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ Producto, Descuento, Stock, Precio})
+        body: JSON.stringify({ Producto, Descuento, Stock, Precio })
     }); //fetch: Es para llamar a la api || await por si se tarda
 
     //Verificar si la API responde que los datos fueron enviados correctamente
@@ -100,5 +100,54 @@ document.getElementById("fmAgregar").addEventListener("submit", async e => {
             icon: "error",
             draggable: true
         });
+    }
+});
+
+
+//Para que sevea la imagen que el usuario aya subido
+document.addEventListener("DOMContentLoaded", function () {
+    const uploadInput = document.getElementById("productImageUpload");
+    const productImage = document.getElementById("productImage");
+    const clearBtn = document.getElementById("clearImageBtn");
+    const errorElement = document.getElementById("imageError");
+
+    // Evento al seleccionar una imagen
+    uploadInput.addEventListener("change", function () {
+        const file = this.files[0];
+        errorElement.textContent = "";
+
+        // Validaciones
+        if (!file) return;
+
+        if (!file.type.match('image.*')) {
+            showError("¡Solo se permiten imágenes!");
+            return;
+        }
+
+        if (file.size > 2 * 1024 * 1024) {
+            showError("La imagen debe pesar menos de 2MB");
+            return;
+        }
+
+        // Mostrar vista previa
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            productImage.src = e.target.result;
+            productImage.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // Botón para limpiar la imagen
+    clearBtn.addEventListener("click", function () {
+        uploadInput.value = "";
+        productImage.src = "https://via.placeholder.com/300x200?text=Imagen+del+producto";
+        errorElement.textContent = "";
+    });
+
+    function showError(message) {
+        errorElement.textContent = message;
+        uploadInput.classList.add("is-invalid");
+        setTimeout(() => uploadInput.classList.remove("is-invalid"), 3000);
     }
 });
