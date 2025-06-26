@@ -1,16 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GamesTation - AdminisrtarProductos</title>
     <link rel="stylesheet" href="css/AdministracionProductos.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
 </head>
+
 <body>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+    <header>
+        <nav></nav>
+    </header>
+    <main class="tabla_container">
+
+        <h2>Listado de productos</h2>
+
+        <div class="tabla_scroll">
+            <!--Tabla de integrantes-->
+            <table id="tabla" class="overflow-auto table table-striped table-hover">
+                <!--(overflow-auto) si la pantalla es muy pequeña, hara que la tabla le salga un scroll-->
+                <thead>
+                    <!--"tr" Table Row es una fila-->
+                    <tr>
+                        <!--"th" Table Row es una columna-->
+                        <th>Codigo</th>
+                        <th>Producto</th>
+                        <th>Descuento</th>
+                        <th>Stock</th>
+                        <th>Precio</th>
+
+                        <th>Acciones</th> <!--Botones para editar y eliminar-->
+                    </tr>
+                </thead>
+
+                <!--Aqui van los registros que lleguen por la API-->
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <!-- Modal -->
+    <div id="mdAgregar" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+
+                <!-- Header del modal -->
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="staticBackdropLabel">Agregar producto</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+
+                <!-- Cuerpo del formulario -->
+                <form id="fmAgregar" class="p-4">
+
+                    <!--Para agregar una imagen-->
+                    <div class="container">
+                        <div class="header">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                    <path
+                                        d="M7 10V9C7 6.23858 9.23858 4 12 4C14.7614 4 17 6.23858 17 9V10C19.2091 10 21 11.7909 21 14C21 15.4806 20.1956 16.8084 19 17.5M7 10C4.79086 10 3 11.7909 3 14C3 15.4806 3.8044 16.8084 5 17.5M7 10C7.43285 10 7.84965 10.0688 8.24006 10.1959M12 12V21M12 12L15 15M12 12L9 15"
+                                        stroke="#000000" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round"></path>
+                                </g>
+                            </svg>
+                            <p>Agregar imagen</p>
+                        </div>
+                        <br>
+                        <label for="file" class="footer">
+                            <svg fill="#000000" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                    <path d="M15.331 6H8.5v20h15V14.154h-8.169z"></path>
+                                    <path d="M18.153 6h-.009v5.342H23.5v-.002z"></path>
+                                </g>
+                            </svg>
+                            <p>No a seleccionado</p>
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                    <path
+                                        d="M5.16565 10.1534C5.07629 8.99181 5.99473 8 7.15975 8H16.8402C18.0053 8 18.9237 8.9918 18.8344 10.1534L18.142 19.1534C18.0619 20.1954 17.193 21 16.1479 21H7.85206C6.80699 21 5.93811 20.1954 5.85795 19.1534L5.16565 10.1534Z"
+                                        stroke="#000000" stroke-width="2"></path>
+                                    <path d="M19.5 5H4.5" stroke="#000000" stroke-width="2" stroke-linecap="round">
+                                    </path>
+                                    <path d="M10 3C10 2.44772 10.4477 2 11 2H13C13.5523 2 14 2.44772 14 3V5H10V3Z"
+                                        stroke="#000000" stroke-width="2"></path>
+                                </g>
+                            </svg>
+                        </label>
+                        <input id="file" type="file">
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <input type="text" id="txtProducto" class="form-control form-control-lg"
+                                placeholder="Nombre producto" required>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="number" id="txtPrecio" class="form-control form-control-lg"
+                                placeholder="Precio" required>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="number" id="txtStock" class="form-control form-control-lg"
+                                placeholder="Cantidad" required>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="number" id="txtDescuento" class="form-control form-control-lg"
+                                placeholder="Descuento" required>
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <button type="reset" class="btn btn-outline-secondary">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Agregar</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!--Cuadro de dialogo para editar-->
+    <dialog id="mdEditar" class="modal"> <!--open="" para abrirlo-->
+        <article>
+
+            <header>
+                <a href="#" class="close" id="btn_cerrar_editar"></a>
+                <h3>Modificar integrante</h3>
+            </header>
+
+            <form id="fmEditar">
+                <input type="hidden" id="txtIdEditar">
+                <input type="text" id="txtNombreEditar" placeholder="Nombre" required>
+                <input type="text" id="txtApellidoEditar" placeholder="Apellido" required>
+                <input type="email" id="txtCorreoEditar" placeholder="Correo eléctronico" required>
+
+                <button class="pushable" type="submit">
+                    <span class="shadow"></span>
+                    <span class="edge"></span>
+                    <span class="front">Actualizar</span>
+                </button>
+            </form>
+
+        </article>
+    </dialog>
+
+    <button id="btnAgregar" class="btnAgregar" data-bs-toggle="modal" data-bs-target="#mdAgregar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-plus-circle"
+            viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+            <path
+                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+        </svg>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+        crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/AdministracionProductos.js"></script>
 </body>
+
 </html>
