@@ -1,214 +1,283 @@
-const API_URL = "https://retoolapi.dev/5CsIhm/Productos";
+const API_URL = "https://retoolapi.dev/ETJdfZ/Productos";
+const IMG_API_URL = 'https://api.imgbb.com/1/upload?key=cc3f6aa7cbcb62e53d0e68839631ed1b';
 
-//Convertimos los datos json
-async function ObtenerProductos() {
-    const respuesta = await fetch(API_URL);
-    const data = await respuesta.json();
-    MostrarDatos(data);
+// Elementos del DOM
+const tbody = document.getElementById('productos-tbody');
+const formAgregar = document.getElementById('fmAgregar');
+const formEditar = document.getElementById('fmEditar');
+
+// Obtener productos al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+    ObtenerProductos();
+    configurarEventos();
+});
+
+// Configurar eventos de los formularios (Es como el controlador)
+function configurarEventos() {
+    formAgregar.addEventListener('submit', agregarProducto);
+    formEditar.addEventListener('submit', editarProducto);
 }
 
-//Funcion para crear las filas de la tabla en base a un JSON
-//"datos" representará al JSON donde viene la información
-function MostrarDatos(datos) {
-    const tabla = document.querySelector("#tabla tbody")
-    tabla.innerHTML = " ";
-    datos.forEach(producto => {
-        tabla.innerHTML += `
+// Obtener productos desde la API
+async function ObtenerProductos() {
+    try {
+        const respuesta = await fetch(API_URL);
+        const productos = await respuesta.json();
+        MostrarDatos(productos);
+    } catch (error) {
+        console.error('Error al obtener productos:', error);
+        Swal.fire('Error', 'No se pudieron cargar los productos', 'error');
+    }
+}
+
+// Mostrar productos en la tabla
+function MostrarDatos(productos) {
+    tbody.innerHTML = '';
+
+    productos.forEach(producto => {
+        tbody.innerHTML += `
             <tr>
-                <td>${producto.id}</td>
-                <td>${producto.nombre}</td>
-                <td>${producto.descuento}</td>
-                <td>${producto.stock}</td>
-                <td>${producto.precio}</td>
                 <td>
-                    <button class="btn btn-outline-primary" onclick="AbrirModalEditar('${producto.id}', '${producto.nombre}', '${producto.descuento}', '${producto.stock}', '${producto.precio}')" data-bs-target="#mdEditar">Editar</button>
-                    <button class="btn btn-outline-danger" onclick="EliminarProducto(${producto.id})">Eliminar</button>
+                    <img src="${producto.img || 'https://via.placeholder.com/100'}" 
+                         alt="${producto.nombre}" 
+                         style="max-width: 100px; height: auto; border-radius: 4px;">
+                </td>
+                <td>${producto.nombre}</td>
+                <td>${producto.descuento || 0}%</td>
+                <td>${producto.stock}</td>
+                <td>$${producto.precio}</td>
+                <td>
+                    <button class="btn btn-outline-primary" 
+                            onclick="AbrirModalEditar('${producto.id}', '${producto.nombre}', '${producto.descuento}', '${producto.stock}', '${producto.precio}', '${producto.img}')">
+                        <i class="bi bi-pencil"></i> Editar
+                    </button>
+                    <button class="btn btn-outline-danger" onclick="EliminarProducto(${producto.id})">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>
                 </td>
             </tr>
         `;
     });
 }
-// Ejecuta el método al cargar el script.
-// Asegúrate de que 'ObtenerProductos' esté definido en algún lugar de tu código.
-ObtenerProductos();
 
-// Obtiene referencias a los elementos del DOM.
-const modalAgregar = document.getElementById("mdAgregar");
-const btnAbrirModalAgregar = document.getElementById("btnAgregar");
-const btnCerrarModalAgregar = document.getElementById("btn_cerrar");
+// Subir imagen a ImgBB
+async function subirImagen(file) {
+    const formData = new FormData();
+    formData.append('image', file);
 
-btnAbrirModalAgregar.addEventListener("click", () => {
-    modalAgregar.showModal();
-});
-
-// Cierra el modal al hacer clic en el botón de cerrar.
-btnCerrarModalAgregar.addEventListener("click", () => {
-    modalAgregar.close();
-});
-
-// Cierra el modal al hacer clic fuera de él.
-// Usamos 'e.target' para verificar si el clic fue directamente en el modal o en un elemento dentro de él.
-modalAgregar.addEventListener('click', (e) => {
-    if (e.target === modalAgregar) {
-        modalAgregar.close();
+    try {
+        const response = await fetch(IMG_API_URL, {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+        return data.data.url;
+    } catch (error) {
+        console.error('Error al subir la imagen:', error);
+        return null;
     }
-});
-
-//El volado para actulazar
-// Función para abrir el modal de edición con los datos del producto
-function AbrirModalEditar(id, nombre, descuento, stock, precio) {
-    // Asignar valores a los campos del formulario
-    document.getElementById("txtIdEditar").value = id;
-    document.getElementById("txtNombreEditar").value = nombre;
-    document.getElementById("txtDescuentoEditar").value = descuento;
-    document.getElementById("txtStockEditar").value = stock;
-    document.getElementById("txtPrecioEditar").value = precio;
-    
-    // Mostrar el modal
-    const modalEditar = new bootstrap.Modal(document.getElementById('mdEditar'));
-    modalEditar.show();
 }
 
-// Función para manejar el envío del formulario de edición
-document.getElementById("fmEditar").addEventListener("submit", async e => {
+// Agregar nuevo producto
+async function agregarProducto(e) {
     e.preventDefault();
-    
-    // Capturar los valores del formulario
-    const id = document.getElementById("txtIdEditar").value;
-    const nombre = document.getElementById("txtNombreEditar").value.trim();
-    const stock = document.getElementById("txtStockEditar").value.trim();
-    const precio = document.getElementById("txtPrecioEditar").value.trim();
-    const descuento = document.getElementById("txtDescuentoEditar").value.trim();
-    
-    // Validación básica
+
+    const nombre = document.getElementById('txtProducto').value.trim();
+    const stock = document.getElementById('txtStock').value.trim();
+    const precio = document.getElementById('txtPrecio').value.trim();
+    const descuento = document.getElementById('txtDescuento').value.trim() || 0;
+    const imagenInput = document.getElementById('productImageUpload');
+    const imagenFile = imagenInput.files[0];
+
     if (!nombre || !stock || !precio) {
-        Swal.fire({
-            title: "Error",
-            text: "Por favor complete todos los campos requeridos",
-            icon: "error"
-        });
+        Swal.fire('Error', 'Complete los campos requeridos', 'error');
         return;
     }
-    
+
     try {
-        // Llamar a la API para actualizar el registro
-        const respuesta = await fetch(`${API_URL}/${id}`, {
-            method: "PUT",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nombre, stock, precio, descuento })
-        });
-        
-        if (respuesta.ok) {
-            // Cerrar el modal
-            const modalEditar = bootstrap.Modal.getInstance(document.getElementById('mdEditar'));
-            modalEditar.hide();
-            
+        // Subir imagen si existe
+        let imagenUrl = 'https://via.placeholder.com/300';
+        if (imagenFile) {
             Swal.fire({
-                title: "¡Éxito!",
-                text: "El producto fue actualizado correctamente",
-                icon: "success"
-            });
-            
-            // Recargar la tabla
-            ObtenerProductos();
-        } else {
-            throw new Error("Error al actualizar el producto");
-        }
-    } catch (error) {
-        Swal.fire({
-            title: "Error",
-            text: error.message,
-            icon: "error"
-        });
-    }
-});
-
-//Eliminar un registro
-async function EliminarProducto(id) {
-    const result = await Swal.fire({
-        title: "¿Quieres eliminar el registro?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
-        confirmButtonText: "Eliminar",
-        cancelButtonText: "Cancelar"
-    });
-
-    if (result.isConfirmed) {
-        try {
-            const respuesta = await fetch(`${API_URL}/${id}`, {
-                method: "DELETE"
+                title: 'Subiendo imagen...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
             });
 
-            if (respuesta.ok) {
-                Swal.fire({
-                    title: "Registro eliminado",
-                    icon: "success"
-                });
-
-                // Recargar la tabla después de eliminar
-                ObtenerProductos();
-            } else {
-                Swal.fire({
-                    title: "El registro no fue eliminado",
-                    icon: "error"
-                });
+            imagenUrl = await subirImagen(imagenFile);
+            if (!imagenUrl) {
+                throw new Error('Error al subir la imagen');
             }
-        } catch (error) {
-            Swal.fire({
-                title: "Error al eliminar",
-                text: error.message,
-                icon: "error"
-            });
         }
+
+        // Crear el producto
+        const respuesta = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                nombre,
+                stock,
+                precio,
+                descuento,
+                img: imagenUrl
+            })
+        });
+
+        if (!respuesta.ok) throw new Error('Error al crear producto');
+
+        Swal.fire('Éxito', 'Producto agregado correctamente', 'success');
+        formAgregar.reset();
+        document.getElementById('productImage').src = 'https://via.placeholder.com/300x200?text=Imagen+del+producto';
+        bootstrap.Modal.getInstance(document.getElementById('mdAgregar')).hide();
+        ObtenerProductos();
+    } catch (error) {
+        Swal.fire('Error', error.message, 'error');
     }
 }
 
-//Para que sevea la imagen que el usuario aya subido
-document.addEventListener("DOMContentLoaded", function () {
-    const uploadInput = document.getElementById("productImageUpload");
-    const productImage = document.getElementById("productImage");
-    const clearBtn = document.getElementById("clearImageBtn");
-    const errorElement = document.getElementById("imageError");
+// Abrir modal de edición
+function AbrirModalEditar(id, nombre, descuento, stock, precio, img) {
+    document.getElementById('txtIdEditar').value = id;
+    document.getElementById('txtNombreEditar').value = nombre;
+    document.getElementById('txtDescuentoEditar').value = descuento;
+    document.getElementById('txtStockEditar').value = stock;
+    document.getElementById('txtPrecioEditar').value = precio;
 
-    // Evento al seleccionar una imagen
-    uploadInput.addEventListener("change", function () {
-        const file = this.files[0];
-        errorElement.textContent = "";
+    // Mostrar imagen actual
+    const imgPreview = document.querySelector('#mdEditar img');
+    imgPreview.src = img || 'https://via.placeholder.com/300x200?text=Imagen+del+producto';
 
-        // Validaciones
-        if (!file) return;
+    // Mostrar modal
+    new bootstrap.Modal(document.getElementById('mdEditar')).show();
+}
 
-        if (!file.type.match('image.*')) {
-            showError("¡Solo se permiten imágenes!");
-            return;
-        }
+// Editar producto
+async function editarProducto(e) {
+    e.preventDefault();
 
-        if (file.size > 2 * 1024 * 1024) {
-            showError("La imagen debe pesar menos de 2MB");
-            return;
-        }
+    const id = document.getElementById('txtIdEditar').value;
+    const nombre = document.getElementById('txtNombreEditar').value.trim();
+    const stock = document.getElementById('txtStockEditar').value.trim();
+    const precio = document.getElementById('txtPrecioEditar').value.trim();
+    const descuento = document.getElementById('txtDescuentoEditar').value.trim() || 0;
+    const imagenInput = document.querySelector('#mdEditar #productImageUpload');
+    const imagenFile = imagenInput.files[0];
 
-        // Mostrar vista previa
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            productImage.src = e.target.result;
-            productImage.style.display = "block";
-        };
-        reader.readAsDataURL(file);
-    });
-
-    // Botón para limpiar la imagen
-    clearBtn.addEventListener("click", function () {
-        uploadInput.value = "";
-        productImage.src = "https://via.placeholder.com/300x200?text=Imagen+del+producto";
-        errorElement.textContent = "";
-    });
-
-    function showError(message) {
-        errorElement.textContent = message;
-        uploadInput.classList.add("is-invalid");
-        setTimeout(() => uploadInput.classList.remove("is-invalid"), 3000);
+    if (!nombre || !stock || !precio) {
+        Swal.fire('Error', 'Complete los campos requeridos', 'error');
+        return;
     }
+
+    try {
+        let imagenUrl = document.querySelector('#mdEditar img').src;
+
+        // Si hay una nueva imagen, subirla
+        if (imagenFile && imagenFile.size > 0) {
+            Swal.fire({
+                title: 'Actualizando imagen...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            imagenUrl = await subirImagen(imagenFile);
+            if (!imagenUrl) {
+                throw new Error('Error al subir la nueva imagen');
+            }
+        }
+
+        // Actualizar producto
+        const respuesta = await fetch(`${API_URL}/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                nombre,
+                stock,
+                precio,
+                descuento,
+                img: imagenUrl
+            })
+        });
+
+        if (!respuesta.ok) throw new Error('Error al actualizar producto');
+
+        Swal.fire('Éxito', 'Producto actualizado correctamente', 'success');
+        bootstrap.Modal.getInstance(document.getElementById('mdEditar')).hide();
+        ObtenerProductos();
+    } catch (error) {
+        Swal.fire('Error', error.message, 'error');
+    }
+}
+
+// Eliminar producto
+async function EliminarProducto(id) {
+    const result = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'No podrás revertir esta acción',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+        const respuesta = await fetch(`${API_URL}/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (!respuesta.ok) throw new Error('Error al eliminar producto');
+
+        Swal.fire('Eliminado', 'El producto ha sido eliminado', 'success');
+        ObtenerProductos();
+    } catch (error) {
+        Swal.fire('Error', error.message, 'error');
+    }
+}
+
+const uploadInput = document.getElementById("productImageUpload");
+const productImage = document.getElementById("productImage");
+const clearBtn = document.getElementById("clearImageBtn");
+const errorElement = document.getElementById("imageError");
+
+// Evento al seleccionar una imagen
+uploadInput.addEventListener("change", function () {
+    const file = this.files[0];
+    errorElement.textContent = "";
+
+    // Validaciones
+    if (!file) return;
+
+    if (!file.type.match('image.*')) {
+        showError("¡Solo se permiten imágenes!");
+        return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+        showError("La imagen debe pesar menos de 2MB");
+        return;
+    }
+
+    // Mostrar vista previa
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        productImage.src = e.target.result;
+        productImage.style.display = "block";
+    };
+    reader.readAsDataURL(file);
 });
+
+// Botón para limpiar la imagen
+clearBtn.addEventListener("click", function () {
+    uploadInput.value = "";
+    productImage.src = "https://via.placeholder.com/300x200?text=Imagen+del+producto";
+    errorElement.textContent = "";
+});
+
+function showError(message) {
+    errorElement.textContent = message;
+    uploadInput.classList.add("is-invalid");
+    setTimeout(() => uploadInput.classList.remove("is-invalid"), 3000);
+}

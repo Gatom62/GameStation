@@ -27,18 +27,17 @@
                     <!--"tr" Table Row es una fila-->
                     <tr>
                         <!--"th" Table Row es una columna-->
-                        <th>Codigo</th>
+                        <th>Imagen</th>
                         <th>Producto</th>
                         <th>Descuento</th>
                         <th>Stock</th>
                         <th>Precio</th>
-
                         <th>Acciones</th> <!--Botones para editar y eliminar-->
                     </tr>
                 </thead>
 
                 <!--Aqui van los registros que lleguen por la API-->
-                <tbody>
+                <tbody id="productos-tbody">
 
                 </tbody>
             </table>
@@ -237,157 +236,5 @@
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/AdministracionProductos.js"></script>
-
-    <!--Para el volado que carga imagenes-->
-    <script>
-        // Para que se vea la imagen que el usuario haya subido
-        document.addEventListener("DOMContentLoaded", function () {
-            const uploadInput = document.getElementById("productImageUpload");
-            const productImage = document.getElementById("productImage");
-            const clearBtn = document.getElementById("clearImageBtn");
-            const errorElement = document.getElementById("imageError");
-
-            // Evento al seleccionar una imagen
-            uploadInput.addEventListener("change", function () {
-                const file = this.files[0];
-                errorElement.textContent = "";
-                uploadInput.classList.remove("is-invalid");
-
-                // Validaciones
-                if (!file) return;
-
-                if (!file.type.match('image.*')) {
-                    showError("¡Solo se permiten imágenes!");
-                    return;
-                }
-
-                if (file.size > 2 * 1024 * 1024) {
-                    showError("La imagen debe pesar menos de 2MB");
-                    return;
-                }
-
-                // Mostrar vista previa
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    productImage.src = e.target.result;
-                    productImage.style.display = "block";
-
-                    // Agregar una pequeña animación de éxito
-                    productImage.style.opacity = '0';
-                    setTimeout(() => {
-                        productImage.style.transition = 'opacity 0.3s ease';
-                        productImage.style.opacity = '1';
-                    }, 100);
-                };
-                reader.readAsDataURL(file);
-            });
-
-            // Botón para limpiar la imagen
-            clearBtn.addEventListener("click", function () {
-                uploadInput.value = "";
-                productImage.src = "https://via.placeholder.com/300x200?text=Imagen+del+producto";
-                errorElement.textContent = "";
-                uploadInput.classList.remove("is-invalid");
-
-                // Pequeña animación al limpiar
-                productImage.style.transition = 'opacity 0.2s ease';
-                productImage.style.opacity = '0.7';
-                setTimeout(() => {
-                    productImage.style.opacity = '1';
-                }, 200);
-            });
-
-            function showError(message) {
-                errorElement.textContent = message;
-                uploadInput.classList.add("is-invalid");
-                setTimeout(() => uploadInput.classList.remove("is-invalid"), 3000);
-            }
-        });
-
-        //Agregar nuevo integrante desde el formulario
-        document.getElementById("fmAgregar").addEventListener("submit", async e => {
-            e.preventDefault(); //Esto representa a "submit" y evita que el formulario se envie de un solo.
-
-            //Capturar los valores del formulario
-            const nombre = document.getElementById("txtProducto").value.trim();
-            const stock = document.getElementById("txtStock").value.trim();
-            const precio = document.getElementById("txtPrecio").value.trim();
-            const descuento = document.getElementById("txtDescuento").value.trim();
-            const modal = bootstrap.Modal.getInstance(document.getElementById('mdAgregar'));
-
-            //Validación basica
-            if (!nombre || !stock || !precio || !descuento) {
-                alert("Ingrese los valores necesarios");
-            }
-
-            //Llamar a la API para enviar el registro
-            const respuesta = await fetch(API_URL, {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nombre, stock, precio, descuento })
-            }); //fetch: Es para llamar a la api || await por si se tarda
-
-            //Verificar si la API responde que los datos fueron enviados correctamente
-            if (respuesta.ok) {
-
-                //Cerramos el modal
-                modal.hide();
-
-                Swal.fire({
-                    title: "El registro fue agregado",
-                    icon: "success",
-                    draggable: true
-                });
-
-                //Recargar la tabla
-                ObtenerProductos();
-            } else {
-                Swal.fire({
-                    title: "El registro no fue agregado",
-                    icon: "error",
-                    draggable: true
-                });
-            }
-        });
-
-        function MostrarDatos(datos) {
-            const tabla = document.querySelector("#tabla tbody")
-            tabla.innerHTML = " ";
-            datos.forEach(producto => {
-                tabla.innerHTML += `
-            <tr>
-                <td>${producto.id}</td>
-                <td>${producto.nombre}</td>
-                <td>${producto.descuento}</td>
-                <td>${producto.stock}</td>
-                <td>${producto.precio}</td>
-                <td>
-                    <button class="btn btn-outline-primary" onclick="AbrirModalEditar('${producto.id}', '${producto.nombre}', '${producto.descuento}', '${producto.stock}', '${producto.precio}')" data-bs-target="#mdEditar">Editar</button>
-                    <button class="btn btn-outline-danger" onclick="EliminarProducto(${producto.id})">Eliminar</button>
-                </td>
-            </tr>
-        `;
-            });
-
-            // Función para abrir el modal de edición con los datos del producto
-            function AbrirModalEditar(id, nombre, descuento, stock, precio) {
-                // Asignar valores a los campos del formulario
-                document.getElementById("txtIdEditar").value = id;
-                document.getElementById("txtNombreEditar").value = nombre;
-                document.getElementById("txtDescuentoEditar").value = descuento;
-                document.getElementById("txtStockEditar").value = stock;
-                document.getElementById("txtPrecioEditar").value = precio;
-            }
-
-            // Cerrar el modal (opcional, ya que Bootstrap maneja el cierre con data-bs-dismiss)
-            const btnCerrarEditar = document.getElementById('btnCerrarEditar');
-            if (btnCerrarEditar) {
-                btnCerrarEditar.addEventListener('click', () => {
-                    modalEditar.hide();
-                });
-            }
-        }
-    </script>
 </body>
-
 </html>
