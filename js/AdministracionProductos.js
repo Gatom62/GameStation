@@ -38,7 +38,7 @@ function MostrarDatos(productos) {
         tbody.innerHTML += `
             <tr>
                 <td>
-                    <img src="${producto.img || 'https://via.placeholder.com/100'}" 
+                    <img src="${producto.img}" 
                          alt="${producto.nombre}" 
                          style="max-width: 100px; height: auto; border-radius: 4px;">
                 </td>
@@ -99,7 +99,7 @@ async function agregarProducto(e) {
         let imagenUrl = 'https://via.placeholder.com/300';
         if (imagenFile) {
             Swal.fire({
-                title: 'Subiendo imagen...',
+                title: 'Subiendo producto...',
                 allowOutsideClick: false,
                 didOpen: () => Swal.showLoading()
             });
