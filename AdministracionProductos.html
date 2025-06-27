@@ -9,11 +9,12 @@
     <link rel="stylesheet" href="css/VistaProductos.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-
+    <link rel="shortcut icon" href="Img/iconoGameStation.png" type="image/x-icon">
 </head>
 
 <body>
     <header>
+<<<<<<< HEAD
         <nav class="navbar navbar-expand-lg navbar-dark px-4">
         <a class="navbar-brand" href="#"> <strong style="font-size: 2rem"><img src="Img/Logo.png" alt="Logo" style="width: 50px;"></strong></a>
         <div class="collapse navbar-collapse">
@@ -26,6 +27,22 @@
             </form>
         </div>
     </nav>
+=======
+        <nav class="navbar navbar-expand-lg navbar-dark px-4 sticky-top">
+            <!-- El resto de tu código permanece igual -->
+            <a class="navbar-brand" href="VistaProductos.html"> <strong style="font-size: 2rem">G</strong></a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link active" href="VistaProductos.html">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link active"
+                            href="AdministracionProductos.html">Administración</a></li>
+                </ul>
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Busca algo" aria-label="Buscar">
+                </form>
+            </div>
+        </nav>
+>>>>>>> 9f5a16f78aaa2a473b8c509706065bf03eb6288c
     </header>
     <br>
     <main class="tabla_container">
@@ -176,8 +193,8 @@
 
                                     <!-- Input para cargar la imagen -->
                                     <div class="input-group">
-                                        <input type="file" class="form-control" id="productImageUpload" accept="image/*"
-                                            aria-label="Subir imagen del producto">
+                                        <input type="file" id="productImageUploadEditar" accept="image/*"
+                                            class="form-control" aria-label="Subir imagen del producto">
                                         <button class="btn btn-outline-secondary" type="button" id="clearImageBtn">
                                             <i class="bi bi-x-circle"></i> Limpiar
                                         </button>
@@ -234,7 +251,7 @@
             </div>
         </div>
     </div>
-<br>
+    <br>
     <button id="btnAgregar" class="btnAgregar" data-bs-toggle="modal" data-bs-target="#mdAgregar">
         <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-plus-circle"
             viewBox="0 0 16 16">
@@ -263,4 +280,5 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/AdministracionProductos.js"></script>
 </body>
+
 </html>

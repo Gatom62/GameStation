@@ -84,8 +84,8 @@ async function agregarProducto(e) {
 
     const nombre = document.getElementById('txtProducto').value.trim();
     const stock = document.getElementById('txtStock').value.trim();
-    const precio = document.getElementById('txtPrecio').value.trim();
-    const descuento = document.getElementById('txtDescuento').value.trim() || 0;
+    let precio = document.getElementById('txtPrecio').value.trim();
+    let descuento = document.getElementById('txtDescuento').value.trim() || 0;
     const imagenInput = document.getElementById('productImageUpload');
     const imagenFile = imagenInput.files[0];
 
@@ -93,6 +93,17 @@ async function agregarProducto(e) {
         Swal.fire('Error', 'Complete los campos requeridos', 'error');
         return;
     }
+
+    //Para calcular el precio total del producto
+    precio = parseFloat(precio);
+    descuento = parseFloat(descuento) || 0;
+
+    if (descuento > 0) {
+        precio = precio * (1 - (descuento / 100));
+    }
+
+    // Formatear a 2 decimales antes de guardar
+    precio = parseFloat(precio.toFixed(2));
 
     try {
         // Subir imagen si existe
@@ -158,18 +169,34 @@ async function editarProducto(e) {
     const id = document.getElementById('txtIdEditar').value;
     const nombre = document.getElementById('txtNombreEditar').value.trim();
     const stock = document.getElementById('txtStockEditar').value.trim();
-    const precio = document.getElementById('txtPrecioEditar').value.trim();
-    const descuento = document.getElementById('txtDescuentoEditar').value.trim() || 0;
-    const imagenInput = document.querySelector('#mdEditar #productImageUpload');
+    let precio = document.getElementById('txtPrecioEditar').value.trim();
+    let descuento = document.getElementById('txtDescuentoEditar').value.trim() || 0;
+    const imagenInput = document.getElementById('productImageUploadEditar'); // Cambiado para coincidir con el modal de edición
     const imagenFile = imagenInput.files[0];
+    const imgPreview = document.querySelector('#mdEditar img'); // Obtener la vista previa
 
     if (!nombre || !stock || !precio) {
         Swal.fire('Error', 'Complete los campos requeridos', 'error');
         return;
     }
 
+    // Convertimos los valores a números
+    precio = parseFloat(precio);
+    descuento = parseFloat(descuento) || 0; // Si no hay descuento, será 0
+
+    // En tu función agregarProducto
+    precio = parseFloat(precio);
+    descuento = parseFloat(descuento) || 0;
+
+    if (descuento > 0) {
+        precio = precio * (1 - (descuento / 100));
+    }
+
+    // Formatear a 2 decimales antes de guardar
+    precio = parseFloat(precio.toFixed(2));
+
     try {
-        let imagenUrl = document.querySelector('#mdEditar img').src;
+        let imagenUrl = imgPreview.src; // Usamos la vista previa actual
 
         // Si hay una nueva imagen, subirla
         if (imagenFile && imagenFile.size > 0) {
@@ -183,6 +210,9 @@ async function editarProducto(e) {
             if (!imagenUrl) {
                 throw new Error('Error al subir la nueva imagen');
             }
+
+            // Actualizar la vista previa inmediatamente
+            imgPreview.src = imagenUrl;
         }
 
         // Actualizar producto
@@ -201,12 +231,43 @@ async function editarProducto(e) {
         if (!respuesta.ok) throw new Error('Error al actualizar producto');
 
         Swal.fire('Éxito', 'Producto actualizado correctamente', 'success');
+
+        // Limpiar el input de archivo después de la subida exitosa
+        imagenInput.value = '';
+
         bootstrap.Modal.getInstance(document.getElementById('mdEditar')).hide();
         ObtenerProductos();
     } catch (error) {
         Swal.fire('Error', error.message, 'error');
     }
 }
+
+// Evento al seleccionar una imagen en el modal de edición
+document.getElementById('productImageUploadEditar').addEventListener("change", function () {
+    const file = this.files[0];
+    const errorElement = document.getElementById("imageErrorEditar");
+    const imgPreview = document.querySelector('#mdEditar img');
+
+    // Validaciones
+    if (!file) return;
+
+    if (!file.type.match('image.*')) {
+        errorElement.textContent = "¡Solo se permiten imágenes!";
+        return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+        errorElement.textContent = "La imagen debe pesar menos de 2MB";
+        return;
+    }
+
+    // Mostrar vista previa
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        imgPreview.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+});
 
 // Eliminar producto
 async function EliminarProducto(id) {
