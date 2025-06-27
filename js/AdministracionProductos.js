@@ -152,6 +152,7 @@ function AbrirModalEditar(id, nombre, descuento, stock, precio, img) {
 }
 
 // Editar producto
+// Editar producto
 async function editarProducto(e) {
     e.preventDefault();
 
@@ -160,8 +161,9 @@ async function editarProducto(e) {
     const stock = document.getElementById('txtStockEditar').value.trim();
     const precio = document.getElementById('txtPrecioEditar').value.trim();
     const descuento = document.getElementById('txtDescuentoEditar').value.trim() || 0;
-    const imagenInput = document.querySelector('#mdEditar #productImageUpload');
+    const imagenInput = document.getElementById('productImageUploadEditar'); // Cambiado para coincidir con el modal de edición
     const imagenFile = imagenInput.files[0];
+    const imgPreview = document.querySelector('#mdEditar img'); // Obtener la vista previa
 
     if (!nombre || !stock || !precio) {
         Swal.fire('Error', 'Complete los campos requeridos', 'error');
@@ -169,7 +171,7 @@ async function editarProducto(e) {
     }
 
     try {
-        let imagenUrl = document.querySelector('#mdEditar img').src;
+        let imagenUrl = imgPreview.src; // Usamos la vista previa actual
 
         // Si hay una nueva imagen, subirla
         if (imagenFile && imagenFile.size > 0) {
@@ -183,6 +185,9 @@ async function editarProducto(e) {
             if (!imagenUrl) {
                 throw new Error('Error al subir la nueva imagen');
             }
+
+            // Actualizar la vista previa inmediatamente
+            imgPreview.src = imagenUrl;
         }
 
         // Actualizar producto
@@ -201,12 +206,43 @@ async function editarProducto(e) {
         if (!respuesta.ok) throw new Error('Error al actualizar producto');
 
         Swal.fire('Éxito', 'Producto actualizado correctamente', 'success');
+
+        // Limpiar el input de archivo después de la subida exitosa
+        imagenInput.value = '';
+
         bootstrap.Modal.getInstance(document.getElementById('mdEditar')).hide();
         ObtenerProductos();
     } catch (error) {
         Swal.fire('Error', error.message, 'error');
     }
 }
+
+// Evento al seleccionar una imagen en el modal de edición
+document.getElementById('productImageUploadEditar').addEventListener("change", function () {
+    const file = this.files[0];
+    const errorElement = document.getElementById("imageErrorEditar");
+    const imgPreview = document.querySelector('#mdEditar img');
+
+    // Validaciones
+    if (!file) return;
+
+    if (!file.type.match('image.*')) {
+        errorElement.textContent = "¡Solo se permiten imágenes!";
+        return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+        errorElement.textContent = "La imagen debe pesar menos de 2MB";
+        return;
+    }
+
+    // Mostrar vista previa
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        imgPreview.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+});
 
 // Eliminar producto
 async function EliminarProducto(id) {
