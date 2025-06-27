@@ -94,17 +94,16 @@ async function agregarProducto(e) {
         return;
     }
 
-    // Convertimos los valores a números
+    //Para calcular el precio total del producto
     precio = parseFloat(precio);
-    descuento = parseFloat(descuento) || 0; // Si no hay descuento, será 0
+    descuento = parseFloat(descuento) || 0;
 
-    // Calculamos el precio con descuento
     if (descuento > 0) {
-        // Calculamos el monto del descuento
-        const montoDescuento = precio * (descuento / 100);
-        // Restamos el descuento al precio original
-        precio = precio - montoDescuento;
+        precio = precio * (1 - (descuento / 100));
     }
+
+    // Formatear a 2 decimales antes de guardar
+    precio = parseFloat(precio.toFixed(2));
 
     try {
         // Subir imagen si existe
@@ -185,13 +184,16 @@ async function editarProducto(e) {
     precio = parseFloat(precio);
     descuento = parseFloat(descuento) || 0; // Si no hay descuento, será 0
 
-    // Calculamos el precio con descuento
+    // En tu función agregarProducto
+    precio = parseFloat(precio);
+    descuento = parseFloat(descuento) || 0;
+
     if (descuento > 0) {
-        // Calculamos el monto del descuento
-        const montoDescuento = precio * (descuento / 100);
-        // Restamos el descuento al precio original
-        precio = precio - montoDescuento;
+        precio = precio * (1 - (descuento / 100));
     }
+
+    // Formatear a 2 decimales antes de guardar
+    precio = parseFloat(precio.toFixed(2));
 
     try {
         let imagenUrl = imgPreview.src; // Usamos la vista previa actual
