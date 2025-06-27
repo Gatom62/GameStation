@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GamesTation - AdminisrtarProductos</title>
     <link rel="stylesheet" href="css/AdministracionProductos.css">
+    <link rel="stylesheet" href="css/VistaProductos.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
@@ -13,8 +14,20 @@
 
 <body>
     <header>
-        <nav></nav>
+        <nav class="navbar navbar-expand-lg navbar-dark px-4">
+        <a class="navbar-brand" href="#"> <strong style="font-size: 2rem">G</strong></a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link active" href="VistaProductos.html">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link active" href="AdministracionProductos.html">Administración</a></li>
+            </ul>
+            <form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Busca algo" aria-label="Buscar">
+            </form>
+        </div>
+    </nav>
     </header>
+    <br>
     <main class="tabla_container">
 
         <h2>Listado de productos</h2>
@@ -221,7 +234,7 @@
             </div>
         </div>
     </div>
-
+<br>
     <button id="btnAgregar" class="btnAgregar" data-bs-toggle="modal" data-bs-target="#mdAgregar">
         <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-plus-circle"
             viewBox="0 0 16 16">
@@ -230,6 +243,18 @@
                 d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
         </svg>
     </button>
+
+    <footer class="footer text-center text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col"><strong>Inicio</strong></div>
+                <div class="col"><strong>Nosotros</strong></div>
+                <div class="col"><strong>Productos</strong></div>
+                <div class="col"><strong>PlayStationPlus</strong></div>
+            </div>
+            <small class="d-block mt-2">Aviso de privacidad - Políticas de crédito</small>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
