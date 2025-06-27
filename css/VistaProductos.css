@@ -58,3 +58,19 @@ body {
         height: 200px;
     }
 }
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+.fnd {
+    background-color: #021f9125;
+    padding: 4px;
+}
+
+.bg-blue-section {
+    background-color: #021f9125;
+    border-radius: 10px;
+    padding: 20px;
+}
