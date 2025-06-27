@@ -84,14 +84,26 @@ async function agregarProducto(e) {
 
     const nombre = document.getElementById('txtProducto').value.trim();
     const stock = document.getElementById('txtStock').value.trim();
-    const precio = document.getElementById('txtPrecio').value.trim();
-    const descuento = document.getElementById('txtDescuento').value.trim() || 0;
+    let precio = document.getElementById('txtPrecio').value.trim();
+    let descuento = document.getElementById('txtDescuento').value.trim() || 0;
     const imagenInput = document.getElementById('productImageUpload');
     const imagenFile = imagenInput.files[0];
 
     if (!nombre || !stock || !precio) {
         Swal.fire('Error', 'Complete los campos requeridos', 'error');
         return;
+    }
+
+    // Convertimos los valores a números
+    precio = parseFloat(precio);
+    descuento = parseFloat(descuento) || 0; // Si no hay descuento, será 0
+
+    // Calculamos el precio con descuento
+    if (descuento > 0) {
+        // Calculamos el monto del descuento
+        const montoDescuento = precio * (descuento / 100);
+        // Restamos el descuento al precio original
+        precio = precio - montoDescuento;
     }
 
     try {
@@ -152,15 +164,14 @@ function AbrirModalEditar(id, nombre, descuento, stock, precio, img) {
 }
 
 // Editar producto
-// Editar producto
 async function editarProducto(e) {
     e.preventDefault();
 
     const id = document.getElementById('txtIdEditar').value;
     const nombre = document.getElementById('txtNombreEditar').value.trim();
     const stock = document.getElementById('txtStockEditar').value.trim();
-    const precio = document.getElementById('txtPrecioEditar').value.trim();
-    const descuento = document.getElementById('txtDescuentoEditar').value.trim() || 0;
+    let precio = document.getElementById('txtPrecioEditar').value.trim();
+    let descuento = document.getElementById('txtDescuentoEditar').value.trim() || 0;
     const imagenInput = document.getElementById('productImageUploadEditar'); // Cambiado para coincidir con el modal de edición
     const imagenFile = imagenInput.files[0];
     const imgPreview = document.querySelector('#mdEditar img'); // Obtener la vista previa
@@ -168,6 +179,18 @@ async function editarProducto(e) {
     if (!nombre || !stock || !precio) {
         Swal.fire('Error', 'Complete los campos requeridos', 'error');
         return;
+    }
+
+    // Convertimos los valores a números
+    precio = parseFloat(precio);
+    descuento = parseFloat(descuento) || 0; // Si no hay descuento, será 0
+
+    // Calculamos el precio con descuento
+    if (descuento > 0) {
+        // Calculamos el monto del descuento
+        const montoDescuento = precio * (descuento / 100);
+        // Restamos el descuento al precio original
+        precio = precio - montoDescuento;
     }
 
     try {

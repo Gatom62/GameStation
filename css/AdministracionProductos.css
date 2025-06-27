@@ -128,8 +128,55 @@ h1 {
 
 /* Imágenes en la tabla */
 table img {
-    width: 50px;
+    width: 60px;
+    min-width: 90px;
     height: 50px;
-    object-fit: cover;
+    min-height: 60px;
+    object-fit:cover;
     border-radius: 4px;
+}
+
+/* Centrar contenido de la tabla */
+#tabla {
+    width: 100%;
+}
+
+#tabla th, 
+#tabla td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 12px 8px;
+}
+
+/* Asegurar que las imágenes en la tabla estén centradas */
+#tabla td img {
+    display: block;
+    margin: 0 auto;
+}
+
+/* Estilo para los botones de acciones */
+#tabla .btn {
+    margin: 2px;
+    white-space: nowrap; /* Evitar que el texto de los botones se divida en varias líneas */
+}
+
+/* Estilo para los precios (precio original y con descuento) */
+#tabla .precios {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+}
+
+#tabla .precio-original {
+    text-decoration: line-through;
+    color: #6c757d;
+    font-size: 0.9em;
+}
+
+#tabla .precio-descuento {
+    font-weight: bold;
+    color: #dc3545;
+    font-size: 1.1em;
 }
